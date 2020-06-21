@@ -50,7 +50,7 @@ public class SpringBatchConfig {
 				.build();
 
 		return jobBuilderFactory
-				.get("ETL-Load")
+				.get("Upload-CSV")
 				.incrementer(new RunIdIncrementer())
 				.start(step)
 				.next(stepTwo)
