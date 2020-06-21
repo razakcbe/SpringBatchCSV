@@ -17,8 +17,10 @@ public class AddressProcessor implements ItemProcessor<Address, Address> {
 	@Override
     public Address process(Address address) throws Exception {
 		Member member = memberRepository.findByAadharNumber(address.getAadharNumber());
-		member.setAddress(address);
-		memberRepository.saveAndFlush(member);
+		if(member != null) {
+			member.setAddress(address);
+			memberRepository.saveAndFlush(member);	
+		}
         return address;
     }
 }
