@@ -24,9 +24,9 @@ public class MarkdownSolrBatchScheduler {
     
     @Scheduled(fixedRate = 30000)
     public void schedule() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
-        jobLauncher.run(job, new JobParametersBuilder()
+        /*jobLauncher.run(job, new JobParametersBuilder()
             .addDate("date", new Date())
-            .toJobParameters());
+            .toJobParameters());*/
     }
 
 }

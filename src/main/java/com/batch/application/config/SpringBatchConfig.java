@@ -1,6 +1,11 @@
 package com.batch.application.config;
 
 
+import java.io.File;
+import java.time.Duration;
+
+import javax.annotation.PreDestroy;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
@@ -15,16 +20,22 @@ import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.devtools.filewatch.FileSystemWatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 
 import com.batch.application.model.Address;
 import com.batch.application.model.Member;
+import com.batch.application.watch.MyFileChangeListener;
 
 @Configuration
 @EnableBatchProcessing
 public class SpringBatchConfig {
+	
+	@Autowired
+	MyFileChangeListener changeListener;
 	
 	@Bean
 	public Job job(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
@@ -110,4 +121,19 @@ public class SpringBatchConfig {
 
 		return defaultLineMapper;
 	}
+	
+	@Bean
+    public FileSystemWatcher fileSystemWatcher() {
+        FileSystemWatcher fileSystemWatcher = new FileSystemWatcher(true, Duration.ofMillis(5000L), Duration.ofMillis(3000L));
+        fileSystemWatcher.addSourceDirectory(new File("src/main/resources"));
+        fileSystemWatcher.addListener(changeListener);
+        fileSystemWatcher.start();
+        System.out.println("started fileSystemWatcher");
+        return fileSystemWatcher;
+    }
+
+    @PreDestroy
+    public void onDestroy() throws Exception {
+        fileSystemWatcher().stop();
+    }
 }
