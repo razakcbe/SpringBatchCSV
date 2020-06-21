@@ -1,21 +1,12 @@
 package com.batch.application.model;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 
 @Entity
 public class Address {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="address_seq")
-	@SequenceGenerator(
-		name="address_seq",
-		sequenceName="address_sequence",
-		allocationSize=1
-	)
 	Integer id;
 	
 	String address1;

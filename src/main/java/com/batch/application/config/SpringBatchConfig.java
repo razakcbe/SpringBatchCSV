@@ -102,7 +102,7 @@ public class SpringBatchConfig {
 		DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
 		lineTokenizer.setDelimiter(",");
 		lineTokenizer.setStrict(false);
-		lineTokenizer.setNames(new String[] { "aadharNumber","address1", "address2", "city", "taluk", "pincode"});
+		lineTokenizer.setNames(new String[] { "id","aadharNumber","address1", "address2", "city", "taluk", "pincode"});
 		BeanWrapperFieldSetMapper<Address> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
 		fieldSetMapper.setTargetType(Address.class);
 		defaultLineMapper.setLineTokenizer(lineTokenizer);

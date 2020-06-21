@@ -18,6 +18,7 @@ public class AddressProcessor implements ItemProcessor<Address, Address> {
     public Address process(Address address) throws Exception {
 		Member member = memberRepository.findByAadharNumber(address.getAadharNumber());
 		member.setAddress(address);
+		memberRepository.saveAndFlush(member);
         return address;
     }
 }

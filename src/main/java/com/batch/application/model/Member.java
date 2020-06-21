@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -13,10 +11,11 @@ import javax.persistence.OneToOne;
 @Entity
 public class Member {
 
-	@Id
+	/*@Id
 	@GeneratedValue(strategy=GenerationType.SEQUENCE)
-	Integer id;
+	Integer id;*/
 
+	@Id
 	Long aadharNumber;
 
 	String firstName;
@@ -29,13 +28,13 @@ public class Member {
 	@JoinColumn(name = "address_id", referencedColumnName = "id")
 	Address address;
 
-	public Integer getId() {
+	/*public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
+	}*/
 
 	public Long getAadharNumber() {
 		return aadharNumber;
@@ -77,9 +76,9 @@ public class Member {
 		this.address = address;
 	}
 
-	@Override
+	/*@Override
 	public String toString() {
 		return "Member [id=" + id + ", aadharNumber=" + aadharNumber + ", firstName=" + firstName + ", lastName="
 				+ lastName + ", createdTime=" + createdTime + "]";
-	}
+	}*/
 }
