@@ -2,6 +2,7 @@ package com.batch.application.config;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 
 import javax.annotation.PreDestroy;
@@ -17,6 +18,7 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.LineMapper;
+import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
@@ -24,7 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.devtools.filewatch.FileSystemWatcher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.core.io.Resource;
 
 import com.batch.application.model.Address;
 import com.batch.application.model.Member;
@@ -36,10 +39,9 @@ public class SpringBatchConfig {
 	
 	@Autowired
 	MyFileChangeListener changeListener;
-	
+				
 	@Bean
 	public Job job(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
-			ItemReader<Member> itemReader, 
 			ItemProcessor<Member, Member> itemProcessor, 
 			ItemWriter<Member> itemWriter,
 			ItemReader<Address> addressItemReader, 
@@ -48,7 +50,7 @@ public class SpringBatchConfig {
 
 		Step step = stepBuilderFactory.get("Member-File-Upload")
 				.<Member, Member>chunk(100)
-				.reader(itemReader)
+				.reader(itemReader())
 				.processor(itemProcessor)
 				.writer(itemWriter)
 				.build();
@@ -69,25 +71,45 @@ public class SpringBatchConfig {
 	}
 
 	@Bean
-	public FlatFileItemReader<Member> itemReader() {
-
-		FlatFileItemReader<Member> flatFileItemReader = new FlatFileItemReader<>();
-		flatFileItemReader.setResource(new FileSystemResource("src/main/resources/members.csv"));
+	public MultiResourceItemReader<Member> itemReader() {
+		
+		Resource[] inputResources = null;
+        FileSystemXmlApplicationContext patternResolver = new FileSystemXmlApplicationContext();
+        try {
+            inputResources = patternResolver.getResources("file:C:/Users/akajakamaludeen/Documents/CsvFile/members*.csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+		MultiResourceItemReader<Member> resourceItemReader = new MultiResourceItemReader<>();
+		FlatFileItemReader<Member> flatFileItemReader = new FlatFileItemReader<Member>();
 		flatFileItemReader.setName("CSV-Reader");
 		flatFileItemReader.setLinesToSkip(1);
 		flatFileItemReader.setLineMapper(lineMapper());
-		return flatFileItemReader;
+		resourceItemReader.setResources(inputResources);
+        resourceItemReader.setDelegate(flatFileItemReader);
+		return resourceItemReader;
 	}
 	
 	@Bean
-	public FlatFileItemReader<Address> addressItemReader() {
-
-		FlatFileItemReader<Address> flatFileItemReader = new FlatFileItemReader<>();
-		flatFileItemReader.setResource(new FileSystemResource("src/main/resources/address.csv"));
+	public MultiResourceItemReader<Address> addressItemReader() {
+		
+		Resource[] inputResources = null;
+        FileSystemXmlApplicationContext patternResolver = new FileSystemXmlApplicationContext();
+        try {
+            inputResources = patternResolver.getResources("file:C:/Users/akajakamaludeen/Documents/CsvFile/address*.csv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+		MultiResourceItemReader<Address> resourceItemReader = new MultiResourceItemReader<>();
+		FlatFileItemReader<Address> flatFileItemReader = new FlatFileItemReader<Address>();
 		flatFileItemReader.setName("CSV-Reader");
 		flatFileItemReader.setLinesToSkip(1);
 		flatFileItemReader.setLineMapper(addressLineMapper());
-		return flatFileItemReader;
+		resourceItemReader.setResources(inputResources);
+        resourceItemReader.setDelegate(flatFileItemReader);
+		return resourceItemReader;
 	}
 
 	@Bean
